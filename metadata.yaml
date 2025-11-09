@@ -1,0 +1,12 @@
+name: astrbot_plugin_routine_manager
+desc: 生成并管理日常作息表；WebUI 可编辑“时间段-行为”映射，并将当前行为注入到 LLM 的 system prompt。
+help: |
+  指令：
+  1) /作息 现在                —— 显示此刻应执行的行为
+  2) /作息 导出                —— 导出当前作息表（文本）
+  3) /作息 导入 <文本块>       —— 导入作息表（每行：HH:MM-HH:MM 行为）
+  4) /作息 开关 开启|关闭      —— 开启/关闭提示词注入
+  5) /作息 测试 12:34          —— 以指定时间测试匹配到的行为
+version: v0.1.1
+author: Huanghun
+repo: https://example.com/astrbot_plugin_routine_manager
