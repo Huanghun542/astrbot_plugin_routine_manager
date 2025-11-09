@@ -9,4 +9,4 @@ help: |
   5) /作息 测试 12:34          —— 以指定时间测试匹配到的行为
 version: v0.1.1
 author: Huanghun
-repo: https://example.com/astrbot_plugin_routine_manager
+repo: https://github.com/Huanghun542/astrbot_plugin_routine_manager
