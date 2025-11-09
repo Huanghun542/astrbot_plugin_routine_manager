@@ -1,0 +1,12 @@
+name: routine_manager
+desc: Daily routine manager with WebUI-editable schedule and system prompt injection.
+help: |
+  Commands:
+  1) /作息 现在                —— show current action
+  2) /作息 导出                —— export current schedule (text)
+  3) /作息 导入 <block>        —— import schedule (each line: HH:MM-HH:MM Action)
+  4) /作息 开关 开启|关闭      —— enable/disable prompt injection
+  5) /作息 测试 12:34          —— test a given time without changing system time
+version: v0.1.0
+author: huanghun
+repo: https://example.com/routine_manager

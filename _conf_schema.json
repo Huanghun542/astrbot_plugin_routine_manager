@@ -1,0 +1,32 @@
+{
+  "inject_enabled": {
+    "type": "bool",
+    "description": "启用提示词注入",
+    "hint": "若启用：插件会把“当前行为”以 system prompt 注入每次 LLM 请求。",
+    "default": true
+  },
+  "timezone": {
+    "type": "string",
+    "description": "时区（可留空使用系统默认）",
+    "hint": "示例：Asia/Shanghai、Asia/Tokyo；留空则用系统时区。",
+    "default": ""
+  },
+  "prompt_head": {
+    "type": "string",
+    "description": "提示词头模板（system prompt）",
+    "hint": "占位符：{action}（当前行为），{now}（当前时间，HH:MM）",
+    "default": "当前时间 {now}，当前行为：{action}。你需要在回复中遵循这一场景。"
+  },
+  "fallback_action": {
+    "type": "string",
+    "description": "兜底行为",
+    "hint": "当当前时间没有命中任何区间时使用该行为。",
+    "default": "自由安排/机动"
+  },
+  "schedule_text": {
+    "type": "string",
+    "description": "作息表（逐行）",
+    "hint": "每行格式：HH:MM-HH:MM 行为；支持跨零点，如 23:00-01:00 夜间休息。",
+    "default": "06:30-07:30 起床/洗漱\n07:30-08:30 早餐/通勤\n08:30-12:00 学习/上课\n12:00-13:30 午餐/午休\n13:30-18:00 学习/实验\n18:00-19:30 晚餐/运动\n19:30-22:30 自习/复盘\n22:30-23:59 放松/准备睡觉\n00:00-06:30 睡觉"
+  }
+}
