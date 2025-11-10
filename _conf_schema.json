@@ -1,0 +1,17 @@
+{
+  "timezone": { "type": "string", "default": "Asia/Shanghai", "description": "时区（IANA）" },
+  "inject_scope": { "type": "string", "default": "all", "options": ["all", "private", "group", "off"], "description": "注入范围" },
+
+  "webui_port": { "type": "int", "default": 58101, "description": "WebUI 端口（服务器部署开放此端口）" },
+
+  "prompt": {
+    "type": "object",
+    "description": "提示词模板",
+    "items": {
+      "routine_prompt_template": {
+        "type": "string",
+        "default": "现在时间：{now} 当前行为：{action} 请在语气和内容上贴合该场景进行回复。"
+      }
+    }
+  }
+}

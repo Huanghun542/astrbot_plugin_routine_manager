@@ -1,0 +1,7 @@
+{
+  "name": "astrbot_plugin_routine_manager",
+  "description": "生成并管理日常作息表；WebUI 可编辑“时间块-行为”（按周）并将当前行为注入到 LLM 的 system prompt。",
+  "author": "Huanghun",
+  "repo": "https://github.com/Huanghun542/astrbot_plugin_routine_manager",
+  "version": "0.5.0"
+}
