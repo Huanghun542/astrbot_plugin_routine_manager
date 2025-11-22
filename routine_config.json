@@ -1,0 +1,19 @@
+{
+  "timezone": "Asia/Shanghai",
+  "inject_scope": "all",
+  "webui_port": 58101,
+  "prompt": {
+    "routine_prompt_template": "现在时间：{now} 当前行为：{action} 请在语气和内容上贴合该场景进行回复。"
+  },
+  "schedule": {
+    "Mon": {},
+    "Tue": {},
+    "Wed": {},
+    "Thu": {},
+    "Fri": {},
+    "Sat": {
+      "06:00-09:00": "刷手机"
+    },
+    "Sun": {}
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "timezone": {
+    "type": "string",
+    "default": "Asia/Shanghai",
+    "description": "时区设置 (IANA 格式)"
+  },
+  "inject_scope": {
+    "type": "string",
+    "default": "all",
+    "options": ["all", "private", "group", "off"],
+    "description": "注入生效范围 (off为关闭)"
+  },
+  "webui_port": {
+    "type": "int",
+    "default": 58101,
+    "description": "管理后台端口"
+  },
+  "prompt": {
+    "type": "object",
+    "description": "提示词配置",
+    "items": {
+      "routine_prompt_template": {
+        "type": "string",
+        "default": "现在时间：{now} 当前行为：{action} 请在语气和内容上贴合该场景进行回复。",
+        "description": "System Prompt 注入模板"
+      }
+    }
+  }
+}

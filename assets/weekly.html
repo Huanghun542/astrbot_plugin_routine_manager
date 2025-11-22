@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>每周日程</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html, body { height: 100%; overflow: hidden; margin: 0; padding: 0; }
+    
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+      background-position: right 0.5rem center;
+      background-repeat: no-repeat;
+      background-size: 1.5em 1.5em;
+      padding-right: 2.5rem;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 select-none h-full flex flex-col">
+
+  <!-- 顶部栏 -->
+  <div class="bg-white shadow-sm border-b px-6 py-3 flex justify-between items-center z-20 shrink-0">
+    <h1 class="text-xl font-bold text-slate-700 flex items-center gap-2">
+      <span class="bg-blue-500 w-2 h-6 rounded-full"></span>
+      每周日程表
+    </h1>
+    <button onclick="openModal(0)" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition shadow-sm flex items-center gap-1">
+      <span class="text-lg leading-none">+</span> 新建日程
+    </button>
+  </div>
+
+  <!-- 主体容器 -->
+  <div class="flex-1 overflow-hidden relative flex flex-col" id="main-container">
+    
+    <!-- 表头 -->
+    <div class="flex border-b bg-white shrink-0 pr-[6px]">
+      <div class="w-14 shrink-0 border-r bg-slate-50"></div>
+      <div class="flex-1 grid grid-cols-7 divide-x" id="header-row"></div>
+    </div>
+
+    <!-- 滚动区域 -->
+    <div class="flex-1 overflow-y-auto relative flex">
+      
+      <!-- 时间轴 -->
+      <div class="w-14 shrink-0 border-r bg-white relative my-5" style="height: 1200px;" id="time-column">
+        <!-- JS 填充 -->
+      </div>
+
+      <!-- 网格 -->
+      <div class="flex-1 grid grid-cols-7 divide-x bg-white relative my-5" style="height: 1200px;" id="grid-container">
+        <!-- JS 填充 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 弹窗 -->
+  <div id="modal" class="fixed inset-0 bg-black/30 backdrop-blur-sm hidden items-center justify-center z-50">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 animate-[fadeIn_0.2s_ease-out]">
+      <h2 class="text-lg font-bold text-slate-800 mb-4">添加新日程</h2>
+      
+      <div class="mb-4">
+        <label class="block text-xs font-medium text-slate-500 mb-1">日期</label>
+        <div class="grid grid-cols-7 gap-1 bg-slate-100 p-1 rounded-lg" id="modal-day-selector"></div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="block text-xs font-medium text-slate-500 mb-1">开始时间</label>
+          <select id="input-start" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none bg-white text-sm"></select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 mb-1">结束时间</label>
+          <select id="input-end" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none bg-white text-sm"></select>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-xs font-medium text-slate-500 mb-1">事项内容</label>
+        <input type="text" id="input-title" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="例如：高等数学课" />
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-xs font-medium text-slate-500 mb-2">标签颜色</label>
+        <div class="flex gap-3 overflow-x-auto p-2 -ml-2" id="color-selector"></div>
+      </div>
+
+      <div class="flex gap-3">
+        <button onclick="closeModal()" class="flex-1 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition">取消</button>
+        <button onclick="saveEvent()" class="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition shadow-sm">确认添加</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // === 配置 ===
+    const START_HOUR = 6;
+    const END_HOUR = 24;
+    const TOTAL_MINUTES = (END_HOUR - START_HOUR) * 60;
+    const WEEK_DAYS = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+    const COLORS = [
+      { v: 'bg-blue-400', n: '蓝色' }, { v: 'bg-green-400', n: '绿色' },
+      { v: 'bg-orange-400', n: '橙色' }, { v: 'bg-purple-400', n: '紫色' },
+      { v: 'bg-pink-400', n: '粉色' }, { v: 'bg-cyan-400', n: '青色' },
+      { v: 'bg-slate-500', n: '灰色' }, { v: 'bg-indigo-500', n: '深蓝' }
+    ];
+
+    let events = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+    let currentEdit = { dayIndex: 0, color: 'bg-blue-400' };
+
+    function init() {
+      renderHeader();
+      renderTimeColumn();
+      renderGridBackground();
+      initModalInputs();
+      
+      // 初始加载数据
+      fetch('/api/load')
+        .then(r => r.json())
+        .then(res => {
+          if(res.ok && res.data && res.data.schedule) {
+             // 解析后端格式 {Mon: {"08:00-09:00": "Title"}} 到前端 events
+             const WEEK_KEYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+             Object.keys(res.data.schedule).forEach((k) => {
+                const idx = WEEK_KEYS.indexOf(k);
+                if(idx === -1) return;
+                const dayData = res.data.schedule[k];
+                Object.entries(dayData).forEach(([timeRange, title]) => {
+                   const [s, e] = timeRange.split('-');
+                   events[idx].push({
+                      id: Date.now() + Math.random(),
+                      startTime: s,
+                      endTime: e,
+                      title: title,
+                      color: COLORS[Math.floor(Math.random() * COLORS.length)].v // 随机颜色或默认
+                   });
+                });
+             });
+             renderEvents();
+          }
+        })
+        .catch(e => console.error('Load failed', e));
+
+      window.getWeeklyData = function() { return JSON.parse(JSON.stringify(events)); };
+    }
+
+    function renderHeader() {
+      document.getElementById('header-row').innerHTML = WEEK_DAYS.map(d => `
+        <div class="text-center py-3 bg-slate-50 font-bold text-slate-700 text-sm">${d}</div>
+      `).join('');
+    }
+
+    function renderTimeColumn() {
+      const col = document.getElementById('time-column');
+      let html = '';
+      for (let h = START_HOUR; h <= END_HOUR; h++) {
+        const top = ((h - START_HOUR) * 60 / TOTAL_MINUTES) * 100;
+        html += `<div class="absolute w-full text-right pr-2 text-xs text-slate-400 -mt-2 font-mono" style="top:${top}%">${h}:00</div>`;
+      }
+      col.innerHTML = html;
+    }
+
+    function renderGridBackground() {
+      const grid = document.getElementById('grid-container');
+      let linesHtml = '';
+      for (let h = START_HOUR; h <= END_HOUR; h++) {
+        const top = ((h - START_HOUR) * 60 / TOTAL_MINUTES) * 100;
+        linesHtml += `<div class="absolute w-full border-t border-slate-100 pointer-events-none" style="top:${top}%"></div>`;
+      }
+      
+      let colsHtml = '';
+      for (let i = 0; i < 7; i++) {
+        colsHtml += `<div class="relative group h-full hover:bg-slate-50/50 transition-colors border-r border-slate-100 last:border-0" id="day-col-${i}">
+           <div class="absolute inset-0 z-0 cursor-crosshair" ondblclick="openModal(${i})" title="双击添加"></div>
+           <div id="event-container-${i}" class="absolute inset-0 pointer-events-none"></div>
+        </div>`;
+      }
+      grid.innerHTML = linesHtml + colsHtml;
+    }
+
+    function renderEvents() {
+      for (let i = 0; i < 7; i++) {
+        const container = document.getElementById(`event-container-${i}`);
+        container.innerHTML = '';
+        const dayEvents = events[i] || [];
+        
+        dayEvents.forEach(evt => {
+          const startM = timeToMinutes(evt.startTime);
+          const endM = timeToMinutes(evt.endTime);
+          const duration = endM - startM;
+          
+          const top = Math.max(0, ((startM - START_HOUR * 60) / TOTAL_MINUTES) * 100);
+          const height = ((endM - startM) / TOTAL_MINUTES) * 100;
+
+          const isCompact = duration <= 45;
+          
+          const layoutClass = isCompact 
+            ? 'flex-row items-center gap-2 px-2 py-0' 
+            : 'flex-col px-1.5 py-1';                 
+            
+          const titleClass = 'text-xs font-bold leading-tight truncate text-white flex-1';
+          const timeClass = isCompact 
+            ? 'text-xs leading-tight whitespace-nowrap opacity-90 text-white font-medium' 
+            : 'text-xs mt-0.5 leading-tight opacity-90 font-mono text-white';
+
+          const el = document.createElement('div');
+          el.className = `absolute mx-1 z-10 rounded-md shadow-sm border border-white/20 overflow-hidden hover:shadow-md hover:scale-[1.02] hover:z-20 transition-all cursor-pointer pointer-events-auto ${evt.color} text-white`;
+          el.style.top = `${top}%`;
+          el.style.height = `${height}%`;
+          el.style.left = '0'; el.style.right = '0';
+          
+          el.innerHTML = `
+            <div class="flex w-full h-full ${layoutClass}">
+              <div class="${titleClass}">${evt.title}</div>
+              <div class="${timeClass}">${evt.startTime}-${evt.endTime}</div>
+            </div>
+          `;
+          el.onclick = (e) => { e.stopPropagation(); deleteEvent(i, evt.id); };
+          container.appendChild(el);
+        });
+      }
+    }
+
+    function initModalInputs() {
+      document.getElementById('color-selector').innerHTML = COLORS.map(c => `
+        <button onclick="selectColor('${c.v}')" class="w-8 h-8 rounded-full shrink-0 ${c.v} hover:scale-110 transition-transform ring-offset-2" id="btn-color-${c.v}"></button>
+      `).join('');
+
+      const startSel = document.getElementById('input-start');
+      let opts = '';
+      for(let m = START_HOUR * 60; m < END_HOUR * 60; m += 30) {
+        opts += `<option value="${minToTime(m)}">${minToTime(m)}</option>`;
+      }
+      startSel.innerHTML = opts;
+      startSel.onchange = updateEndTimeOptions;
+    }
+
+    function updateEndTimeOptions() {
+      const startVal = document.getElementById('input-start').value;
+      const endSel = document.getElementById('input-end');
+      const startM = timeToMinutes(startVal);
+      const currentEndVal = endSel.value;
+      let html = '';
+      for(let m = START_HOUR * 60; m <= END_HOUR * 60; m += 30) {
+        if(m > startM) {
+          let tStr = (m === 24*60) ? "24:00" : minToTime(m);
+          html += `<option value="${tStr}">${tStr}</option>`;
+        }
+      }
+      endSel.innerHTML = html;
+      if (currentEndVal && timeToMinutes(currentEndVal) > startM) {
+        endSel.value = currentEndVal;
+      } else {
+        endSel.selectedIndex = 0;
+      }
+    }
+
+    function openModal(dayIdx) {
+      currentEdit.dayIndex = dayIdx;
+      document.getElementById('modal-day-selector').innerHTML = WEEK_DAYS.map((d, i) => `
+        <button onclick="switchModalDay(${i})" class="text-xs py-1.5 rounded-md transition-all ${i === dayIdx ? 'bg-white text-blue-600 shadow-sm font-bold ring-1 ring-black/5' : 'text-slate-500 hover:bg-slate-200'}">${d.replace('周','')}</button>
+      `).join('');
+      document.getElementById('input-start').value = "08:00";
+      updateEndTimeOptions();
+      document.getElementById('input-end').value = "09:00";
+      document.getElementById('input-title').value = "";
+      selectColor('bg-blue-400');
+      document.getElementById('modal').classList.remove('hidden');
+      document.getElementById('modal').classList.add('flex');
+      setTimeout(() => document.getElementById('input-title').focus(), 100);
+    }
+    function closeModal() { document.getElementById('modal').classList.add('hidden'); document.getElementById('modal').classList.remove('flex'); }
+    function switchModalDay(i) { currentEdit.dayIndex = i; openModal(i); }
+    function selectColor(c) {
+      currentEdit.color = c;
+      COLORS.forEach(i => {
+        const btn = document.getElementById(`btn-color-${i.v}`);
+        if(i.v === c) btn.classList.add('ring-2', 'ring-slate-400', 'scale-110');
+        else btn.classList.remove('ring-2', 'ring-slate-400', 'scale-110');
+      });
+    }
+    function saveEvent() {
+      const title = document.getElementById('input-title').value.trim();
+      if(!title) { alert('请输入事项内容'); return; }
+      const sVal = document.getElementById('input-start').value;
+      const eVal = document.getElementById('input-end').value;
+      const dayIdx = currentEdit.dayIndex;
+      const sM = timeToMinutes(sVal); const eM = timeToMinutes(eVal);
+      if(events[dayIdx].some(ev => { const evS = timeToMinutes(ev.startTime); const evE = timeToMinutes(ev.endTime); return sM < evE && eM > evS; })) { alert('该时段已有安排'); return; }
+      events[dayIdx].push({ id: Date.now(), startTime: sVal, endTime: eVal, title: title, color: currentEdit.color });
+      renderEvents(); closeModal();
+    }
+    function deleteEvent(d, id) { if(confirm('确定删除吗？')) { events[d] = events[d].filter(e => e.id !== id); renderEvents(); } }
+    function timeToMinutes(str) { if(str === '24:00') return 24*60; const [h, m] = str.split(':').map(Number); return h * 60 + m; }
+    function minToTime(m) { const hh = Math.floor(m/60).toString().padStart(2, '0'); const mm = (m%60).toString().padStart(2, '0'); return `${hh}:${mm}`; }
+
+    init();
+
+    // AstrBot 交互
+    (function(){
+      const bar = document.createElement('div');
+      bar.style.cssText = 'position:fixed;right:12px;bottom:12px;background:#111827;color:#fff;padding:8px 12px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:9999;font-size:12px;opacity:0.8';
+      bar.innerHTML = '双击空白处添加'; document.body.appendChild(bar); setTimeout(()=>bar.remove(), 5000);
+      
+      function buildWeeklyFromData(data){
+        var WEEK_KEYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun']; 
+        var weekly = {Mon:{}, Tue:{}, Wed:{}, Thu:{}, Fri:{}, Sat:{}, Sun:{}};
+        WEEK_KEYS.forEach(function(k, di){ 
+            (data[di]||[]).forEach(function(item){ 
+                if(item && item.startTime && item.endTime) 
+                    weekly[k][item.startTime + '-' + item.endTime] = (item.title||'').trim(); 
+            }); 
+        });
+        return weekly;
+      }
+      
+      async function saveToAstrBot(){
+        if(!window.confirm('确认保存配置到 AstrBot？')) return;
+        try{
+          var r = await fetch('/api/config', { 
+              method:'POST', 
+              headers:{'Content-Type':'application/json'}, 
+              body: JSON.stringify({ 
+                  timezone: 'Asia/Shanghai', 
+                  inject_scope: 'all', 
+                  schedule: buildWeeklyFromData(window.getWeeklyData()), 
+                  prompt: { routine_prompt_template: '现在时间：{now} 当前行为：{action} 请在语气和内容上贴合该场景进行回复。' } 
+              }) 
+          });
+          var j = await r.json(); 
+          j.ok ? toast('✅ 已保存') : toast('❌ 失败：'+(j.error||''));
+        }catch(e){ toast('❌ 异常：'+e.message); }
+      }
+      
+      function toast(t){ var d=document.createElement('div'); d.textContent=t; d.style.cssText='position:fixed;right:16px;bottom:76px;background:#111827;color:#fff;padding:10px 12px;border-radius:12px;z-index:9999'; document.body.appendChild(d); setTimeout(function(){d.remove()}, 1800); }
+      var btn=document.createElement('button'); btn.textContent='保存配置'; btn.style.cssText='position:fixed;right:16px;bottom:16px;background:#0f172a;color:#fff;border:0;padding:10px 16px;border-radius:12px;cursor:pointer;font-weight:bold;box-shadow:0 4px 12px rgba(0,0,0,.3);z-index:9999'; btn.onclick=saveToAstrBot; document.body.appendChild(btn);
+    })();
+  </script>
+</body>
+</html>

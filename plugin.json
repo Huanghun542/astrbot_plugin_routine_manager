@@ -1,0 +1,7 @@
+{
+  "name": "astrbot_plugin_routine_manager",
+  "version": "0.8.0",
+  "description": "日常作息管理插件，支持通过 WebUI 可视化编辑周日程表，并根据当前时间动态注入行为到 LLM 系统提示词。",
+  "author": "Huanghun",
+  "repo": "https://github.com/Huanghun542/astrbot_plugin_routine_manager"
+}
