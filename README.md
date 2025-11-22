@@ -1,6 +1,3 @@
-这里是修复了所有格式错误的完整代码，您可以直接点击右上角复制，然后粘贴到您的 `README.md` 文件中：
-
-```markdown
 <div align="center">
 
 ![:name](https://count.getloli.com/@astrbot_plugin_routine_manager?name=astrbot_plugin_routine_manager&theme=minecraft&padding=6&offset=0&align=top&scale=1&pixelated=1&darkmode=auto)
@@ -85,9 +82,9 @@ pip install quart hypercorn
 
 ## 🤝 TODO
 
-- [x] 可视化周视图日程表
-- [x] LLM 动态 Prompt 注入
-- [x] 安全密钥登录机制
+- [ ] 可视化周视图日程表
+- [ ] LLM 动态 Prompt 注入
+- [ ] 安全密钥登录机制
 - [ ] 支持更多自定义注入模板
 - [ ] 移动端 UI 适配优化
 
