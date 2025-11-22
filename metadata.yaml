@@ -1,0 +1,7 @@
+name: astrbot_plugin_routine_manager # 这是你的插件的唯一识别名。
+display_name: astrbot 智能作息管理插件 
+desc: "日常作息管理插件，支持通过 WebUI 可视化编辑周日程表，并根据当前时间动态注入行为到 LLM 系统提示词"  # 插件简短描述
+help: 无  # 插件的帮助信息
+version: v0.8.0 # 插件版本号。格式：v1.1.1 或者 v1.1
+author: Huanghun542 # 作者
+repo: https://github.com/Huanghun542/astrbot_plugin_routine_manager # 插件的仓库地址
