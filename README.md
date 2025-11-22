@@ -1,3 +1,6 @@
+这里是修复了所有格式错误的完整代码，您可以直接点击右上角复制，然后粘贴到您的 `README.md` 文件中：
+
+```markdown
 <div align="center">
 
 ![:name](https://count.getloli.com/@astrbot_plugin_routine_manager?name=astrbot_plugin_routine_manager&theme=minecraft&padding=6&offset=0&align=top&scale=1&pixelated=1&darkmode=auto)
@@ -27,54 +30,71 @@ _📅 [astrbot](https://github.com/AstrBotDevs/AstrBot) 智能作息管理插件
 ## 📦 安装
 
 ### 1. 导入插件
+
 - **方法一（推荐）**：直接在 AstrBot 的插件市场搜索 `astrbot_plugin_routine_manager` 点击安装。
+
 - **方法二（手动）**：克隆本仓库到插件文件夹：
 
 ```bash
 cd /AstrBot/data/plugins
 git clone https://github.com/Huanghun542/astrbot_plugin_routine_manager
-2. 安装依赖
+```
+
+### 2. 安装依赖
+
 本插件需要额外的 Web 框架支持，请在 AstrBot 环境下运行：
-code
-Bash
+
+```bash
 pip install quart hypercorn
-3. 重启
+```
+
+### 3. 重启
+
 控制台重启 AstrBot 以加载插件。
-⚙️ 配置
-主要配置通过 WebUI 进行，高级配置可在 routine_config.json 中修改：
-timezone: 时区设置（默认 Asia/Shanghai）
-inject_scope: 注入生效范围 (all / private / group / off)
-webui_port: 后台端口（默认 58101）
-⌨️ 使用说明
-1. 开启管理后台
+
+## ⚙️ 配置
+
+主要配置通过 WebUI 进行，高级配置可在 `routine_config.json` 中修改：
+
+- `timezone`: 时区设置（默认 `Asia/Shanghai`）
+- `inject_scope`: 注入生效范围 (`all` / `private` / `group` / `off`)
+- `webui_port`: 后台端口（默认 `58101`）
+
+## ⌨️ 使用说明
+
+### 1. 开启管理后台
 在聊天窗口（仅限管理员）发送指令，获取临时的访问地址和密钥。
-2. 配置作息
-浏览器打开机器人回复的 URL。
-输入密钥登录。
-双击 空白网格添加日程（例如：08:00-10:00 上课）。
-点击右下角 “保存配置” 按钮。
-3. 验证效果
+
+### 2. 配置作息
+1. 浏览器打开机器人回复的 URL。
+2. 输入密钥登录。
+3. **双击** 空白网格添加日程（例如：`08:00-10:00` 上课）。
+4. 点击右下角 **“保存配置”** 按钮。
+
+### 3. 验证效果
 配置完成后，当时间处于设定的日程范围内时，LLM 的 System Prompt 会自动追加类似以下内容：
-现在时间：2025-11-22 09:30:00 当前行为：上课 请在语气和内容上贴合该场景进行回复。
-⌨️ 指令表
-指令	说明
-作息管理 开启管理后台	生成 WebUI 访问链接及临时登录密钥
-示例图
-(在此处放一张你的 WebUI 截图，例如 assets/preview.png)
-![alt text](https://via.placeholder.com/800x400?text=WebUI+Preview+Image)
-🤝 TODO
 
-可视化周视图日程表
+> 现在时间：2025-11-22 09:30:00 当前行为：上课 请在语气和内容上贴合该场景进行回复。
 
-LLM 动态 Prompt 注入
+## ⌨️ 指令表
 
-安全密钥登录机制
+|     指令      |                    说明                    |
+|:-------------:|:-----------------------------------------------:|
+| 作息管理 开启管理后台 |   生成 WebUI 访问链接及临时登录密钥      |
 
-支持更多自定义注入模板
 
-移动端 UI 适配优化
-👥 贡献指南
-🌟 Star 这个项目！（点右上角的星星，感谢支持！）
-🐛 提交 Issue 报告问题
-💡 提出新功能建议
-🔧 提交 Pull Request 改进代码
+## 🤝 TODO
+
+- [x] 可视化周视图日程表
+- [x] LLM 动态 Prompt 注入
+- [x] 安全密钥登录机制
+- [ ] 支持更多自定义注入模板
+- [ ] 移动端 UI 适配优化
+
+## 👥 贡献指南
+
+- 🌟 Star 这个项目！（点右上角的星星，感谢支持！）
+- 🐛 提交 Issue 报告问题
+- 💡 提出新功能建议
+- 🔧 提交 Pull Request 改进代码
+```
